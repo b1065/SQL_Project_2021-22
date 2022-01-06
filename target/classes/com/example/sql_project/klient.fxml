@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sql_project.KlientController">
+   <children>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <BorderPane prefHeight="200.0" prefWidth="200.0">
+               <center>
+                  <Label fx:id="witaj" alignment="CENTER" contentDisplay="CENTER" text="ERROR" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font name="Sylfaen" size="18.0" />
+                     </font>
+                  </Label>
+               </center>
+               <top>
+                  <Label alignment="CENTER" prefWidth="200.0" text="Panel Klienta" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font name="Arial Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </top>
+            </BorderPane>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="zamowienie" mnemonicParsing="false" onAction="#toOrder" prefWidth="200.0" text="Złóż zamówienie" />
+            <Region maxWidth="100.0" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="historia" mnemonicParsing="false" onAction="#toHistory" prefWidth="200.0" text="Historia zamówień" />
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="modyfkuj" mnemonicParsing="false" onAction="#toModify" prefWidth="200.0" text="Zmień dane konta" />
+            <Region layoutX="10.0" layoutY="10.0" maxWidth="100.0" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="usun" mnemonicParsing="false" onAction="#usunKonto" prefWidth="200.0" text="Usuń konto" />
+            <Region layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region layoutX="10.0" layoutY="235.0" prefHeight="200.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="buttonWstecz" mnemonicParsing="false" onAction="#toMain" prefWidth="100.0" text="Wstecz" />
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+   </children>
+</VBox>
