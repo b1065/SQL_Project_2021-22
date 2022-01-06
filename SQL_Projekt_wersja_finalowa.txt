@@ -1,0 +1,407 @@
+create table KLIENT
+(
+    ID_KLIENTA NUMBER(5) not null
+        constraint KLIENT_PK
+        	primary key,
+    IMIE varchar2(30),
+    NAZWISKO VARCHAR2(30),
+    ADRES VARCHAR2(50)
+);
+create table ZAMOWIENIE
+(
+	ID_ZAM NUMBER(6) not null
+		constraint ZAMOWIENIE_PK
+			primary key,
+	ID_KLIENTA NUMBER(5) not null
+		constraint ZAMOWIENIE_KLIENT_ID_KLIENTA_FK
+			references KLIENT,
+	CENA NUMBER(4) not null,
+	CZAS_REALIZACJI INTERVAL DAY TO SECOND not null,
+	STAN VARCHAR2(20) default 'W TRAKCIE PRZYGOTOWYWANIA' not null
+);
+create table PPRACOWNICY
+(
+	ID_PRAC NUMBER(5) not null
+		constraint PRACOWNICY_PK
+			primary key,
+	IMIE VARCHAR2(20),
+	NAZWISKO VARCHAR2(20) not null,
+	STAWKA_GODZINOWA NUMBER(5,2) default 18.20,
+	STAN VARCHAR2(20) default 'WOLNY' not null
+);
+create table ZADANIE
+(
+	ID_ZAM NUMBER(6) not null
+		constraint ZADANIE_ZAMOWIENIE_ID_ZAM_FK
+			references ZAMOWIENIE,
+	ID_PRAC NUMBER(5) not null,
+	STAN VARCHAR2(20) default 'NIE ZREALIZOWANE' not null,
+	ID_PRZEPISU NUMBER(6) not null,
+	DATA TIMESTAMP default CURRENT_TIMESTAMP
+);
+ALTER TABLE ZADANIE ADD CONSTRAINT ZADANIE_PRACOWNICY_ID_PRAC_FK FOREIGN KEY (ID_PRAC) REFERENCES PPRACOWNICY(ID_PRAC);
+create table DANIE
+(
+	NAZWA VARCHAR2(100) not null,
+	CZAS_PRZYGOTOWANIA INTERVAL DAY TO SECOND not null,
+	CENA NUMBER(6,2) not null,
+	ID_DANIA NUMBER(5) not null
+		constraint DANIE_PK
+			primary key
+);
+ALTER TABLE DANIE MODIFY (CZAS_PRZYGOTOWANIA INTERVAL DAY TO SECOND);
+ALTER TABLE ZADANIE ADD CONSTRAINT
+    ZADANIE_DANIE_ID_DANIA_FK FOREIGN KEY (ID_PRZEPISU) REFERENCES DANIE(ID_DANIA);
+create table SKLADNIK
+(
+	ID_PRZEPISU NUMBER(5) NOT NULL
+	    CONSTRAINT SKLADNIK_DANIE_ID_DANIA_FK  REFERENCES DANIE(ID_DANIA),
+	NAZWA VARCHAR2(50) not null,
+		constraint SKLADNIK_PK
+			primary key (NAZWA, ID_PRZEPISU),
+	ILOSC NUMBER(7) not null
+);
+
+create table SKRZYNKA
+(
+	PRODUCENT VARCHAR2(50) not null,
+	NAZWA_PRODUKTU VARCHAR2(20) not null,
+	CENA number(6,2) not null,
+	ILOSC number(4),
+	DATA DATE default TRUNC(CURRENT_DATE) not null,
+	constraint SKRZYNKA_PK
+		primary key (PRODUCENT, NAZWA_PRODUKTU, DATA)
+);
+create table UZUPELNIENIE
+(
+	NAZWA VARCHAR2(20) not null,
+	ILOSC NUMBER(4) not null,
+	STAN VARCHAR2(20) default 'NIE ZREALIZOWANE' not null,
+	DATA TIMESTAMP default CURRENT_TIMESTAMP not null,
+	constraint UZUPELNIENIE_PK
+		primary key (NAZWA, DATA)
+);
+create table FREKWENCJA
+(
+	POCZATEK_ZMIANY TIMESTAMP default CURRENT_TIMESTAMP not null,
+	KONIEC_ZMIANY TIMESTAMP,
+	ID_PRAC NUMBER(5)
+		constraint FREKWENCJA_PRACOWNICY_ID_PRAC_FK
+			references PPRACOWNICY,
+	constraint FREKWENCJA_PK
+		primary key (POCZATEK_ZMIANY, ID_PRAC)
+);
+create table BILANS
+(
+	DATA DATE default TRUNC(CURRENT_DATE) not null
+		constraint BILANS_PK
+			primary key,
+	KOSZT NUMBER(10,2),
+	ZYSK NUMBER(10,2)
+);
+
+DROP TABLE SKRZYNKA;
+DROP TABLE UZUPELNIENIE;
+DROP TABLE FREKWENCJA;
+DROP TABLE ZADANIE;
+DROP TABLE SKLADNIK;
+DROP TABLE ZAMOWIENIE;
+DROP TABLE DANIE;
+DROP TABLE PPRACOWNICY;
+DROP TABLE KLIENT;
+DROP TABLE BILANS;
+
+CREATE SEQUENCE nr_zamowienia
+START WITH 1
+INCREMENT BY 1
+MINVALUE 1
+MAXVALUE 100
+CYCLE;
+
+CREATE OR REPLACE PACKAGE Procedury IS
+    PROCEDURE DodajKlienta(pImie VARCHAR, pNazwisko VARCHAR, pAdres VARCHAR);
+    PROCEDURE UsunKlienta(pID NUMBER);
+    PROCEDURE ModyfikujKlienta(pID NUMBER, pImie VARCHAR, pNazwisko VARCHAR, pAdres VARCHAR);
+    PROCEDURE ZmienStatusZamowienia(pID NUMBER, pStan VARCHAR);
+    PROCEDURE DodajZadanie(pZam NUMBER, pDanie NUMBER, pPrac NUMBER);
+    PROCEDURE ZmienStatusZadania(pZam NUMBER, pStan VARCHAR);
+    PROCEDURE DodajDanie(pNazwa VARCHAR, pCzas INTERVAL DAY TO SECOND, pCena NUMBER);
+    PROCEDURE ModyfikujDanie(pID NUMBER, pNazwa VARCHAR, pCzas INTERVAL DAY TO SECOND, pCena NUMBER);
+    PROCEDURE UsunDanie(pID NUMBER);
+    PROCEDURE DodajSkladnik(pNazwa VARCHAR, pDanie NUMBER, pIlosc NUMBER);
+    PROCEDURE UsunSkladnik(pNazwa VARCHAR);
+    PROCEDURE ZmienIloscSkladnika(pNazwa VARCHAR, pIlosc NUMBER);
+    PROCEDURE DodajSkrzynke(pProd VARCHAR, pNazwa VARCHAR, pIlosc NUMBER, pCena NUMBER);
+    PROCEDURE ModyfikujSkrzynke(pProd VARCHAR, pNazwa VARCHAR, pData DATE, pIlosc NUMBER, pCena NUMBER);
+    PROCEDURE UsunSkrzynke(pProd VARCHAR, pNazwa VARCHAR, pData DATE);
+    PROCEDURE DodajUzupelnienie(pNazwa VARCHAR, pIlosc NUMBER);
+    PROCEDURE ZmienStatusUzupelnienia(pNazwa VARCHAR, pData DATE, pStan VARCHAR);
+    PROCEDURE DodajPracownika(pImie VARCHAR, pNazwisko VARCHAR);
+    PROCEDURE ModyfikujPracownika(pID NUMBER, pImie VARCHAR, pNazwisko VARCHAR, pSG NUMBER);
+    PROCEDURE ZmienStatusPracownika(pID NUMBER, pStan VARCHAR);
+    PROCEDURE UsunPracownika(pID NUMBER);
+    PROCEDURE DodajBilans(pZysk NUMBER, pKoszt NUMBER);
+    PROCEDURE ModyfikujBilans(pZysk NUMBER, pKoszt NUMBER);
+    PROCEDURE ZacznijZmiane(pPrac NUMBER);
+    PROCEDURE ZakonczZmiane(pPrac NUMBER);
+    PROCEDURE ZakonczWszystkieZmiany;
+END Procedury;
+CREATE OR REPLACE PACKAGE BODY Procedury IS
+    Procedure DodajKlienta(pImie VARCHAR, pNazwisko VARCHAR, pAdres VARCHAR) IS
+    BEGIN
+        INSERT INTO KLIENT(ID_KLIENTA, IMIE, NAZWISKO, ADRES)
+        VALUES (NVL((SELECT MAX(ID_KLIENTA)+1 FROM KLIENT),1),pImie,pNazwisko,pAdres);
+    END DodajKlienta;
+    Procedure UsunKlienta(pID NUMBER) IS
+    BEGIN
+        DELETE
+        FROM KLIENT
+        WHERE ID_KLIENTA = pID;
+    END UsunKlienta;
+    Procedure ModyfikujKlienta(pID NUMBER, pImie VARCHAR, pNazwisko VARCHAR, pAdres VARCHAR) IS
+    BEGIN
+        UPDATE KLIENT
+        SET IMIE = pImie, NAZWISKO = pNazwisko, ADRES = pAdres
+        WHERE ID_KLIENTA = pID;
+    END ModyfikujKlienta;
+    Procedure ZmienStatusZamowienia(pID NUMBER, pStan VARCHAR) IS
+    BEGIN
+        UPDATE ZAMOWIENIE
+        SET STAN = pStan
+        WHERE ID_ZAM = pID;
+    END ZmienStatusZamowienia;
+    Procedure DodajZadanie(pZam NUMBER, pDanie NUMBER, pPrac NUMBER) IS
+    BEGIN
+        INSERT INTO ZADANIE(ID_ZAM, ID_PRAC, ID_PRZEPISU)
+        VALUES (pZam, pPrac, pDanie);
+    END DodajZadanie;
+    Procedure ZmienStatusZadania(pZam NUMBER, pStan VARCHAR) IS
+    BEGIN
+        UPDATE ZADANIE
+        SET STAN = pStan
+        WHERE ID_ZAM = pZam;
+    END ZmienStatusZadania;
+    Procedure DodajDanie(pNazwa VARCHAR, pCzas INTERVAL DAY TO SECOND, pCena NUMBER) IS
+    BEGIN
+        INSERT INTO DANIE(NAZWA, CZAS_PRZYGOTOWANIA, ID_DANIA, CENA)
+        VALUES (pNazwa, pCzas, NVL((SELECT MAX(ID_DANIA)+1 FROM DANIE),1), pCena);
+    END DodajDanie;
+    Procedure ModyfikujDanie(pID NUMBER, pNazwa VARCHAR, pCzas INTERVAL DAY TO SECOND, pCena NUMBER) IS
+    BEGIN
+        UPDATE DANIE
+        SET NAZWA = pNazwa, CZAS_PRZYGOTOWANIA = pCzas, CENA = pCena
+        WHERE ID_DANIA = pID;
+    END ModyfikujDanie;
+    Procedure UsunDanie(pID NUMBER) IS
+    BEGIN
+        DELETE
+        FROM DANIE
+        WHERE ID_DANIA = pID;
+    END UsunDanie;
+    Procedure DodajSkladnik(pNazwa VARCHAR, pDanie NUMBER, pIlosc NUMBER) IS
+    BEGIN
+        INSERT INTO SKLADNIK(ID_PRZEPISU, NAZWA, ILOSC)
+        VALUES (pDanie,pNazwa,pIlosc);
+    END DodajSkladnik;
+    Procedure UsunSkladnik(pNazwa VARCHAR) IS
+    BEGIN
+        DELETE
+        FROM SKLADNIK
+        WHERE NAZWA = pNazwa;
+    END UsunSkladnik;
+    Procedure ZmienIloscSkladnika(pNazwa VARCHAR, pIlosc NUMBER) IS
+    BEGIN
+        UPDATE SKLADNIK
+        SET ILOSC = ILOSC + pIlosc
+        WHERE NAZWA = pNazwa;
+    END ZmienIloscSkladnika;
+    Procedure DodajSkrzynke(pProd VARCHAR, pNazwa VARCHAR, pIlosc NUMBER, pCena NUMBER) IS
+    BEGIN
+        INSERT INTO SKRZYNKA(PRODUCENT, NAZWA_PRODUKTU, CENA, ILOSC)
+        VALUES (pProd,pNazwa,pCena,pIlosc);
+    END DodajSkrzynke;
+    Procedure ModyfikujSkrzynke(pProd VARCHAR, pNazwa VARCHAR, pData DATE, pIlosc NUMBER, pCena NUMBER) IS
+    BEGIN
+        UPDATE SKRZYNKA
+        SET ILOSC = pIlosc, CENA = pCena
+        WHERE PRODUCENT = pProd AND NAZWA_PRODUKTU = pNazwa AND DATA = pData;
+    END ModyfikujSkrzynke;
+    Procedure UsunSkrzynke(pProd VARCHAR, pNazwa VARCHAR, pData DATE) IS
+    BEGIN
+        DELETE
+        FROM SKRZYNKA
+        WHERE PRODUCENT = pProd AND NAZWA_PRODUKTU = pNazwa AND DATA = pData;
+    END UsunSkrzynke;
+    Procedure DodajUzupelnienie(pNazwa VARCHAR, pIlosc NUMBER) IS
+    BEGIN
+        INSERT INTO UZUPELNIENIE(NAZWA, ILOSC)
+        VALUES (pNazwa,pIlosc);
+    END DodajUzupelnienie;
+    Procedure ZmienStatusUzupelnienia(pNazwa VARCHAR, pData DATE, pStan VARCHAR) IS
+    BEGIN
+        UPDATE UZUPELNIENIE
+        SET STAN = pStan
+        WHERE NAZWA = pNazwa AND DATA = pData;
+    END ZmienStatusUzupelnienia;
+    Procedure DodajPracownika(pImie VARCHAR, pNazwisko VARCHAR) IS
+    BEGIN
+        INSERT INTO PPRACOWNICY(ID_PRAC, IMIE, NAZWISKO)
+        VALUES (NVL((SELECT MAX(ID_PRAC)+1 FROM PPRACOWNICY),1),pImie,pNazwisko);
+    END DodajPracownika;
+    Procedure ModyfikujPracownika(pID NUMBER, pImie VARCHAR, pNazwisko VARCHAR, pSG NUMBER) IS
+    BEGIN
+        UPDATE PPRACOWNICY
+        SET IMIE = pImie, NAZWISKO = pNazwisko, STAWKA_GODZINOWA = pSG
+        WHERE ID_PRAC = pID;
+    END ModyfikujPracownika;
+    Procedure ZmienStatusPracownika(pID NUMBER, pStan VARCHAR) IS
+    BEGIN
+        UPDATE PPRACOWNICY
+        SET STAN = pStan
+        WHERE ID_PRAC = pID;
+    END ZmienStatusPracownika;
+    Procedure UsunPracownika(pID NUMBER) IS
+    BEGIN
+        DELETE
+        FROM PPRACOWNICY
+        WHERE ID_PRAC = pID;
+    END UsunPracownika;
+    Procedure DodajBilans(pZysk NUMBER, pKoszt NUMBER) IS
+    BEGIN
+        INSERT INTO BILANS(KOSZT, ZYSK)
+        VALUES (pKoszt, pZysk);
+    END DodajBilans;
+    Procedure ModyfikujBilans(pZysk NUMBER, pKoszt NUMBER) IS
+    BEGIN
+        UPDATE BILANS
+        SET ZYSK = ZYSK + pZysk, KOSZT = KOSZT + pKoszt
+        WHERE TRUNC(DATA) = TRUNC(CURRENT_DATE);
+    END ModyfikujBilans;
+    Procedure ZacznijZmiane(pPrac NUMBER) IS
+    BEGIN
+        INSERT INTO FREKWENCJA(ID_PRAC,KONIEC_ZMIANY)
+        VALUES (pPrac,null);
+    END ZacznijZmiane;
+    Procedure ZakonczZmiane(pPrac NUMBER) IS
+    BEGIN
+        UPDATE FREKWENCJA
+        SET KONIEC_ZMIANY = CURRENT_TIMESTAMP
+        WHERE ID_PRAC = pPrac AND KONIEC_ZMIANY IS NULL;
+    END ZakonczZmiane;
+    Procedure ZakonczWszystkieZmiany IS
+    BEGIN
+        UPDATE FREKWENCJA
+        SET KONIEC_ZMIANY = CURRENT_TIMESTAMP
+        WHERE KONIEC_ZMIANY IS NULL;
+    END ZakonczWszystkieZmiany;
+END Procedury;
+
+CREATE OR REPLACE PACKAGE Funkcje IS
+    FUNCTION ZnajdzFrekwencje(pID NUMBER) RETURN NUMBER;
+    FUNCTION ZnajdzSkladniki(pNazwa VARCHAR, pIlosc NUMBER) RETURN NUMBER;
+    FUNCTION ZnajdzPracownika RETURN NUMBER;
+    FUNCTION ZnajdzBilans RETURN NUMBER;
+    FUNCTION DodajZamowienie(pKlient NUMBER, pCena NUMBER, pCzas INTERVAL DAY TO SECOND) RETURN NUMBER;
+END Funkcje;
+CREATE OR REPLACE PACKAGE BODY Funkcje IS
+    FUNCTION ZnajdzFrekwencje(pID NUMBER) RETURN NUMBER IS
+        pHelp NUMBER;
+    BEGIN
+        SELECT 1
+        INTO pHelp
+        FROM FREKWENCJA
+        WHERE ID_PRAC = pID AND KONIEC_ZMIANY IS NULL;
+        CASE
+            WHEN pHelp IS NULL THEN RETURN 0;
+            ELSE RETURN pHelp;
+        END CASE;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN RETURN 0;
+    END ZnajdzFrekwencje;
+    FUNCTION ZnajdzSkladniki(pNazwa VARCHAR, pIlosc NUMBER) RETURN NUMBER IS
+        pHelp NUMBER;
+    BEGIN
+        SELECT ILOSC
+        INTO pHelp
+        FROM SKRZYNKA
+        WHERE NAZWA_PRODUKTU = pNazwa
+        FETCH FIRST 1 ROW ONLY;
+        CASE
+            WHEN pHelp < pIlosc THEN RETURN 0;
+            ELSE RETURN 1;
+        END CASE;
+    END ZnajdzSkladniki;
+    FUNCTION ZnajdzPracownika RETURN NUMBER IS
+        pWynik NUMBER;
+    BEGIN
+        SELECT ID_PRAC
+        INTO pWynik
+        FROM FREKWENCJA
+        WHERE POCZATEK_ZMIANY < CURRENT_TIMESTAMP
+          AND KONIEC_ZMIANY IS NULL
+          AND (SELECT STAN FROM PPRACOWNICY WHERE FREKWENCJA.ID_PRAC = PPRACOWNICY.ID_PRAC) = 'WOLNY'
+        FETCH FIRST 1 ROW ONLY;
+        CASE
+            WHEN pWynik IS NULL THEN RETURN 0;
+            ELSE RETURN pWynik;
+        END CASE;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN RETURN 0;
+    END ZnajdzPracownika;
+    FUNCTION ZnajdzBilans RETURN NUMBER IS
+        pWynik DATE;
+    BEGIN
+        SELECT DATA
+        INTO pWynik
+        FROM BILANS
+        WHERE TRUNC(DATA) = TRUNC(CURRENT_DATE);
+        CASE
+            WHEN pWynik IS NULL THEN RETURN 0;
+            ELSE RETURN 1;
+        END CASE;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN RETURN 0;
+    END ZnajdzBilans;
+    FUNCTION DodajZamowienie(pKlient NUMBER, pCena NUMBER, pCzas INTERVAL DAY TO SECOND) RETURN NUMBER IS
+        pNumer NUMBER;
+    BEGIN
+        INSERT INTO ZAMOWIENIE(ID_ZAM, ID_KLIENTA, CENA, CZAS_REALIZACJI)
+        VALUES (nr_zamowienia.nextval,pKlient,pCena,pCzas);
+        pNumer:=nr_zamowienia.currval;
+        RETURN pNumer;
+    END DodajZamowienie;
+END Funkcje;
+
+CREATE OR REPLACE TRIGGER NowyZysk
+    AFTER INSERT ON ZAMOWIENIE
+    FOR EACH ROW
+DECLARE
+    vCzy NUMBER(2);
+BEGIN
+    vCzy := Funkcje.ZnajdzBilans();
+    CASE
+        WHEN vCzy = 0 THEN Procedury.DodajBilans(:New.CENA,0);
+        WHEN vCzy = 1 THEN Procedury.ModyfikujBilans(:New.CENA,0);
+    END CASE;
+END;
+
+CREATE OR REPLACE TRIGGER NowyKoszt
+    AFTER INSERT ON SKRZYNKA
+    FOR EACH ROW
+DECLARE
+    vCzy NUMBER(2);
+BEGIN
+    vCzy := Funkcje.ZnajdzBilans();
+    CASE
+        WHEN vCzy = 0 THEN Procedury.DodajBilans(0,:NEW.CENA * :NEW.ILOSC);
+        WHEN vCzy = 1 THEN Procedury.ModyfikujBilans(0,:NEW.CENA * :NEW.ILOSC);
+    END CASE;
+END;
+
+CREATE OR REPLACE TRIGGER NoweUzupelnienie
+    AFTER UPDATE ON SKRZYNKA
+    FOR EACH ROW
+    WHEN (NEW.ILOSC < 10)
+BEGIN
+    Procedury.DodajUzupelnienie(:OLD.NAZWA_PRODUKTU,20);
+END;
