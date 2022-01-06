@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sql_project.KierownikPracownicyController">
+   <center>
+      <TableView fx:id="tabelka" BorderPane.alignment="CENTER">
+        <columns>
+            <TableColumn fx:id="imie" minWidth="150.0" prefWidth="-1.0" text="Imie" />
+            <TableColumn fx:id="nazwisko" minWidth="150.0" prefWidth="-1.0" text="Nazwisko" />
+          <TableColumn fx:id="stawka" minWidth="150.0" prefWidth="-1.0" text="Stawka godzinowa" />
+          <TableColumn fx:id="stan" minWidth="150.0" prefWidth="-1.0" text="Stan" />
+        </columns>
+      </TableView>
+   </center>
+   <top>
+      <Label alignment="CENTER" prefHeight="83.0" text="Lista pracowników" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+   </top>
+   <bottom>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Region prefWidth="50.0" HBox.hgrow="ALWAYS" />
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="150.0">
+               <children>
+                  <Region VBox.vgrow="ALWAYS" />
+                  <Button fx:id="buttonDodaj" maxHeight="25.0" maxWidth="115.0" mnemonicParsing="false" onAction="#toDodaj" prefHeight="25.0" prefWidth="115.0" text="Dodaj pracownika" />
+                  <Region VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="150.0">
+               <children>
+                  <Region VBox.vgrow="ALWAYS" />
+                  <Button fx:id="buttonModyfikuj" maxHeight="25.0" maxWidth="115.0" mnemonicParsing="false" onAction="#toModyfikuj" prefHeight="25.0" prefWidth="115.0" text="Edytuj pracownika" />
+                  <Region VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="150.0">
+               <children>
+                  <Region VBox.vgrow="ALWAYS" />
+                  <Button fx:id="buttonUsun" maxHeight="25.0" maxWidth="115.0" mnemonicParsing="false" onAction="#toUsun" prefHeight="25.0" prefWidth="115.0" text="Usuń pracownika" />
+                  <Region VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="150.0">
+               <children>
+                  <Region VBox.vgrow="ALWAYS" />
+                  <Button fx:id="buttonWstecz" maxHeight="25.0" maxWidth="75.0" mnemonicParsing="false" onAction="#toKierownik" prefHeight="25.0" prefWidth="75.0" text="Powrót" />
+                  <Region VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <Region prefWidth="50.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sql_project.HistoriaZamowienController">
+   <top>
+      <Label alignment="CENTER" prefHeight="80.0" text="Historia Zamówień" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+   </top>
+   <bottom>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Region prefHeight="200.0" prefWidth="200.0" />
+                  <Button fx:id="buttonWstecz" alignment="CENTER" mnemonicParsing="false" onAction="#toMain" prefWidth="200.0" text="Wstecz" />
+                  <Region maxHeight="150.0" prefHeight="200.0" prefWidth="200.0" />
+               </children>
+            </VBox>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </bottom>
+   <center>
+      <TableView fx:id="tabelka" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="id" minWidth="150.0" prefWidth="150.0" text="ID zamówienia" />
+          <TableColumn fx:id="czas" minWidth="150.0" prefWidth="150.0" text="Czas realizacji" />
+            <TableColumn fx:id="cena" minWidth="150.0" prefWidth="150.0" text="Cena" />
+            <TableColumn fx:id="stan" minWidth="150.0" prefWidth="150.0" text="Stan" />
+        </columns>
+      </TableView>
+   </center>
+</BorderPane>

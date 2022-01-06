@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sql_project.KierownikController">
+   <children>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <BorderPane prefHeight="200.0" prefWidth="200.0">
+               <center>
+                  <Label prefWidth="200.0" text="Panel Kierownika" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font name="Arial Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </center>
+            </BorderPane>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="buttonPracownicy" mnemonicParsing="false" onAction="#toPracownicy" prefWidth="200.0" text="Pracownicy" />
+                  <Region minHeight="20.0" prefHeight="200.0" prefWidth="200.0" />
+                  <Button fx:id="buttonZadania" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#toZadania" prefWidth="200.0" text="Zadania" />
+                  <Region layoutX="10.0" layoutY="36.0" minHeight="20.0" prefHeight="200.0" prefWidth="200.0" />
+                  <Button fx:id="buttonSkladniki" mnemonicParsing="false" onAction="#toMagazyn" prefWidth="200.0" text="Magazyn" />
+               </children>
+            </VBox>
+            <Region maxWidth="100.0" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="buttonFrekwencja" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#toFrekwencja" prefWidth="200.0" text="Frekwencja" />
+                  <Region minHeight="20.0" prefHeight="200.0" prefWidth="200.0" />
+                  <Button fx:id="buttonMenu" mnemonicParsing="false" onAction="#toMenu" prefWidth="200.0" text="Menu" />
+                  <Region layoutX="10.0" layoutY="36.0" minHeight="20.0" prefHeight="200.0" prefWidth="200.0" />
+                  <Button fx:id="buttonBilans" mnemonicParsing="false" onAction="#toBilans" prefWidth="200.0" text="Bilans" />
+               </children>
+            </VBox>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="buttonWstecz" mnemonicParsing="false" onAction="#toMain" prefWidth="100.0" text="Wstecz" />
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+   </children>
+</VBox>
